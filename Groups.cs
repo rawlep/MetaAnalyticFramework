@@ -22,7 +22,7 @@ namespace paperTestsCode
         {
             // Whether or not we subtract 1 here depends on the optimisation function used.  In our case,
             // it is justified since we are using the Pearson correlation coefficient and want to prefer those
-            // case where the correlations are closest to 1.
+            // cases where the correlations are closest to 1.
             Func<T, T, double> absRelation = (x, y) => Math.Abs(function(x, y) - 1);
 
             // Again whether the sum, average, etc. is used here is arbitrary
