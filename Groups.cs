@@ -42,18 +42,18 @@ namespace paperTestsCode
             List<List<List<T>>> recombinedFounders = recombinedFounders_aux.Select(x => x.Select(y => listConcatenate(y)).ToList()).ToList();
             int original_recombinations = recombinedFounders.Count;
 
-            // 3. if the the number of recombined founder is reasonable
+            // 3. if the the number of recombined founder sets is reasonable ("Reasonable" is determined by the 'num_results' parameter)
             if (recombinedFounders.Count <= num_results)
             {   
                 // 3a. Return all the recombined founder sets
                 return Tuple.Create(recombinedFounders,original_recombinations); 
             }
             else
-            {   // 3b. Otherwise we retain only those original founder that score increasingly higher/lower
-                // subject to the meanAdjacentRelation defined above
+            {   // 3b. Otherwise we retain only those original founder sets that score increasingly higher/lower
+                // subject to the meanAdjacentRelation function defined above
                 var result = maintainBy(meanAdjacentRelation, comp, recombinedFounders, null);
 
-                // And return only those specified number of these. 
+                // .. and return at most the specified 'reasonable' number of then. 
                 return Tuple.Create(take(num_results,result),original_recombinations); 
             }
         }
