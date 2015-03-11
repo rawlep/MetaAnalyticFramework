@@ -128,7 +128,7 @@ namespace paperTestsCode
             if (n1 != 0)
                 return Math.Sqrt(sumOfSquaresOfDifferences / n1);
             else
-                throw new Exception("Cannot calculate standard deviation of an empty sequence");
+                throw new Exception("Cannot calculate standard deviation of a sequence with less than 2 elements");
 
         }
 
