@@ -25,7 +25,7 @@ namespace paperTestsCode
             // cases where the correlations are closest to 1.
             Func<T, T, double> absRelation = (x, y) => Math.Abs(function(x, y) - 1);
 
-            // Again whether the sum, average, etc. is used here is arbitrary
+            // Again whether the sum, average, etc. is used here is dependss on the comparison function
             Func<List<T>, double> adjacentRelations_aux = ls => (zipp(ls).Select(x => Math.Exp(absRelation(x.Item1, x.Item2)))).Sum(); //.Average() ;
 
             Func<List<T>, double> adjacentRelations = ls => (ls == null || ls.Count < 2) ? 2 : adjacentRelations_aux(ls);
