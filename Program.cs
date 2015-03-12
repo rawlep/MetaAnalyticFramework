@@ -36,33 +36,34 @@ namespace paperTestsCode
             /// the Pearson correlation delegate for testing
             Func<double[], double[], double> relation = (x, y) => pearsons(x, y);
 
-            var optimised_result = gp.metaAnalyticProcedure(relation, Groups.Comprison.LessOrEqual, articleData, 0.8,10);
+            var optimised_result = gp.metaAnalyticProcedure(relation, Groups.Comprison.LessOrEqual, articleData, 0.75, Groups.GroupMinimum.Two);
             var meta_result = optimised_result.Item1;
             var original_recombinations = optimised_result.Item2;
-            
+
             // print the groups generated from the procedure for evaluations
             Console.WriteLine("              ------------- META-ANALYTIC RESULTS -------------                     \n");
             for (int i = 0; i < meta_result.Count; i++)
             {
                 var trp = meta_result.ElementAt(i);
-                Console.WriteLine("  ------- Group configuration: {0}. No. of members: {1}  ------------------ ", i.ToString(), trp.Count.ToString());
+                var j = i + 1;
+                Console.WriteLine("  ------- Group configuration: {0}. No. of members: {1}  ------------------ ", j.ToString(), trp.Count.ToString());
                 List<string> cuts = trp.Select(x => printSequence(x.Select(y => printSequence(y))) + "\n \n  ").ToList();
                 Console.WriteLine(String.Concat(cuts));
                 // Console.WriteLine("There are {0} elements in this group\n", trp.Count.ToString());
             }
             Console.WriteLine(" -------------------------------------------------------- ");
-            Console.WriteLine("That's it... There are {0} possibilities, instead of {1}. Awesome!", meta_result.Count.ToString(), original_recombinations.ToString());
+            Console.WriteLine("That's it... There are {0} possibilities, instead of {1} after recombining. Awesome!", meta_result.Count.ToString(), original_recombinations.ToString());
             Console.WriteLine("Now press any key to exit.");
 
-            
+
             // we can now apply an analytic procedure/metric to determine which group configuration is optimum.
             // Let's call our procedure mml as was the case in the article (of course we will not just return the
             // first element of the list!).
-            Func<List<List<List<double[]>>>, List<List<double[]>>> mml = groups => (groups != null && groups.Count > 0)? groups.ElementAt(0) : new List<List<double[]>>();
+            Func<List<List<List<double[]>>>, List<List<double[]>>> mml = groups => (groups != null && groups.Count > 0) ? groups.ElementAt(0) : new List<List<double[]>>();
             // We can now apply the metric like 
             var metric_applied_to_selected_founder_sets = mml(meta_result);
             // ... and, subsequently, analyse a smaller number of possibilities amongst which is likely to be the solution
-            
+
             Console.ReadKey();
         }
 
