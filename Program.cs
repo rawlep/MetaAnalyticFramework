@@ -132,7 +132,6 @@ namespace paperTestsCode
                 throw new Exception("Cannot calculate standard deviation of a sequence with less than 2 elements");
 
         }
-
     }
 }
 
