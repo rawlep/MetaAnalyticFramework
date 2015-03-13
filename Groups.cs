@@ -42,21 +42,12 @@ namespace paperTestsCode
             var recombinedFounders_aux = allGroups(founderSets, GroupMinimum.One == group_min);
             List<List<List<T>>> recombinedFounders = recombinedFounders_aux.Select(x => x.Select(y => listConcatenate(y)).ToList()).ToList();
             int original_recombinations = recombinedFounders.Count;
+            
+            //3. apply a a fitness test to the all the recombined groups using meanAdjacentRelation as a sort of fitness function 
+            var result = maintainBy(meanAdjacentRelation, comp, recombinedFounders);
 
-            // 3. if the the number of recombined founder sets is reasonable ("Reasonable" is determined by the 'num_results' parameter)
-            //if (recombinedFounders.Count <= num_results)
-            //{
-                // 3a. Return all the recombined founder sets
-               // return Tuple.Create(recombinedFounders, original_recombinations);
-            //}
-            // 3. Retain only those original founder sets that score increasingly higher/lower
-            // subject to the meanAdjacentRelation function defined above
-            var result = maintainBy(meanAdjacentRelation, comp, recombinedFounders, null);
-
-                // .. and return at most the specified 'reasonable' number of then. 
-               // take(num_results,
+            // 4. then return those that remained in the queue
             return Tuple.Create( result, original_recombinations);
-            //}
         }
 
         // Form 2-tuples of adjacent elements of a list
@@ -74,10 +65,10 @@ namespace paperTestsCode
         }
 
         /// <summary>
-        /// Retaining elements in a list that satisfy a given condition such that only those elements of incraesing / decreasing
-        /// subject to some real function on its elements, remains in the list
+        /// Applying a fitness function to elements of a list and retain those that rank increasing higher/lower
+        /// subject to a stated comparison 
         /// </summary>
-        private List<T> maintainBy<T>(Func<T, double> fn, Comprison comp, List<T> ls, List<T> acc)
+        private List<T> maintainBy<T>(Func<T, double> fn, Comprison comp, List<T> ls)
         {
             if (ls != null && ls.Count > 1)
             {
@@ -198,7 +189,7 @@ namespace paperTestsCode
 
         /// <summary>
         /// Calculates all possible adjacent elements from n cuts of the list built from
-        /// at least min_lim elements, keeping track of the occurrence of cuts
+        /// at least min_lim elements
         /// </summary>
         private List<List<List<T>>> nGroups<T>(int m, int min_lim, List<T> inList)
         {
