@@ -10,7 +10,7 @@ namespace paperTestsCode
         static void Main(string[] args)
         {
 
-            /// example from the article
+            /// example from Table 1 in the article
             List<double[]> articleData = new List<double[]>();
             articleData.Add(new double[] { 3.199, 3.241, 3.33, 3.383, 3.439, 3.518, 3.56, 3.601, 3.708, 3.705, 3.786 });
             articleData.Add(new double[] { 3.223, 3.246, 3.321, 3.406, 3.451, 3.514, 3.555, 3.639, 3.725, 3.781, 3.857 });
@@ -33,54 +33,69 @@ namespace paperTestsCode
 
             Groups gp = new Groups();
 
+            // ----------------------------------------------------------------------------------------------------------------------
+            // --- uncomment this bit to verify the number of possible proogresson groups generated for different section lengths ---
+            //      
+            //file = new System.IO.StreamWriter(@"possible_progression_groups.csv");
+            //List<int> test = new List<int>();
+            //for (int i = 0; i < 23; i++)
+            //{
+            //    test.Add(i);
+            //    int len = gp.allGroups(test,true).Count;
+            //    file.WriteLine((i+1).ToString() + "," + len.ToString());
+            //    Console.WriteLine("Length: {0}, Adjacent groups: {1} ", (i+1).ToString() , len.ToString() );
+            //}
+            //file.Close();
+            // ------------------------------------------------------------------------------------------------------------------------
+
             /// the Pearson correlation delegate for testing
             Func<double[], double[], double> relation = (x, y) => pearsons(x, y);
 
-            var optimised_result = gp.metaAnalyticProcedure(relation, Groups.Comprison.LessOrEqual, articleData, 0.75, Groups.GroupMinimum.Two);
+            var optimised_result = gp.metaAnalyticProcedure(relation, Groups.Comprison.Proximity, articleData, 0.75, 1);
             var meta_result = optimised_result.Item1;
             var original_recombinations = optimised_result.Item2;
 
-            // print the groups generated from the procedure for evaluations
+            
+            // print the groups generated from the procedure for evaluation
             Console.WriteLine("              ------------- META-ANALYTIC RESULTS -------------                     \n");
             for (int i = 0; i < meta_result.Count; i++)
             {
                 var trp = meta_result.ElementAt(i);
-                var j = i + 1;
-                Console.WriteLine("  ------- Group configuration: {0}. No. of members: {1}  ------------------ ", j.ToString(), trp.Count.ToString());
-                List<string> cuts = trp.Select(x => printSequence(x.Select(y => printSequence(y))) + "\n \n  ").ToList();
+                Console.WriteLine("  ------- Group configuration: {0}. No. of members: {1}  ------------------ ", i.ToString(), trp.Count.ToString());
+                List<string> cuts = trp.Select(x => printSequence(x.Select(y => printSequence(y,true)), true) + "\n \n  ").ToList();
                 Console.WriteLine(String.Concat(cuts));
-                // Console.WriteLine("There are {0} elements in this group\n", trp.Count.ToString());
             }
             Console.WriteLine(" -------------------------------------------------------- ");
-            Console.WriteLine("That's it... There are {0} possibilities, instead of {1} after recombining. Awesome!", meta_result.Count.ToString(), original_recombinations.ToString());
+            Console.WriteLine("That's it... Instead of 131071 possibilities there are now {0}, initiated by {1} founder sets. Awesome!", 
+                                meta_result.Count.ToString(), original_recombinations.ToString());
             Console.WriteLine("Now press any key to exit.");
 
-
+            
             // we can now apply an analytic procedure/metric to determine which group configuration is optimum.
             // Let's call our procedure mml as was the case in the article (of course we will not just return the
             // first element of the list!).
-            Func<List<List<List<double[]>>>, List<List<double[]>>> mml = groups => (groups != null && groups.Count > 0) ? groups.ElementAt(0) : new List<List<double[]>>();
+            Func<List<List<List<double[]>>>, List<List<double[]>>> mml = groups => (groups != null && groups.Count > 0)? groups.ElementAt(0) : new List<List<double[]>>();
             // We can now apply the metric like 
             var metric_applied_to_selected_founder_sets = mml(meta_result);
             // ... and, subsequently, analyse a smaller number of possibilities amongst which is likely to be the solution
-
+            
             Console.ReadKey();
         }
 
         /// <summary>
         /// Pretty printing elements in an Enumerable
         /// </summary>
-        static string printSequence<T>(IEnumerable<T> ls)
+        static string printSequence<T>(IEnumerable<T> ls, bool add_braces)
         {
             string temp = "";
-            if (ls != null)
+            int len = ls.Count();
+            if (ls != null && len > 0)
             {
-                int len = ls.Count();
-                temp += "[";
+                temp += add_braces ? "[" : "";
                 for (int i = 0; i < len; i++)
                 {
                     if (i == len - 1)
-                        temp += ls.ElementAt(i).ToString() + "]";
+                        temp += ls.ElementAt(i).ToString() + (add_braces ? "]" : "") ;
                     else
                         temp += ls.ElementAt(i).ToString() + ",";
                 }
@@ -89,7 +104,7 @@ namespace paperTestsCode
         }
 
         ///<summary>
-        /// Pearson correlation coefficient for testing
+        /// The pearson correlation coefficient 
         /// </summary>
         static double pearsons(IEnumerable<double> xs, IEnumerable<double> ys)
         {
@@ -129,9 +144,10 @@ namespace paperTestsCode
             if (n1 != 0)
                 return Math.Sqrt(sumOfSquaresOfDifferences / n1);
             else
-                throw new Exception("Cannot calculate standard deviation of a sequence with less than 2 elements");
+                throw new Exception("Cannot calculate standard deviation of an empty sequence");
 
         }
+
     }
 }
 
