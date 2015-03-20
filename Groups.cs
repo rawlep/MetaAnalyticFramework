@@ -12,7 +12,7 @@ namespace paperTestsCode
         /// <summary>
         /// An enumeration type for comparing values
         /// </summary>
-        public enum Comprison { SrictlyLess, LessOrEqual, Proximity };
+        public enum Comprison { SrictlyLess, LessOrEqual,  Proximity };
 
         /// <summary>
         /// 
@@ -29,8 +29,7 @@ namespace paperTestsCode
         {
             // 
             Func<T, T, double> absRelation = (x, y) => (Math.Abs(function(x, y) - tau));
-            Func<List<T>, double> connectedness_aux = ls => apply_to_adjecent_elms(absRelation, ls, 0);
-            Func<List<T>, double> connectedness = ls => (ls == null || ls.Count < 2) ? 2 : connectedness_aux(ls);
+            Func<List<T>, double> connectedness = ls => apply_to_adjecent_elms(absRelation, ls, 2); 
             Func<List<List<T>>, double> modelConnectedness = ls => (ls.Select(x => connectedness(x))).Average();
 
   
@@ -53,17 +52,22 @@ namespace paperTestsCode
         // apply a function to  adjacent elements of the list
         private double apply_to_adjecent_elms<T>(Func<T,T,double> fun, List<T> list,double dummy)
         {
-            int len = list.Count;
-            var temp = new List<double>();
-            if (len < 2)
-            {   
-                return dummy; 
-            }
+            if (list == null)
+                return dummy;
             else
             {
-                for (int i = 0; i < len - 1; i++)
-                    temp.Add(fun (list.ElementAt(i),list.ElementAt(i+1)) );
-                return temp.Average();
+                int len = list.Count;
+                if (len < 2)
+                {
+                    return dummy;
+                }
+                else
+                {   
+                    var temp = new List<double>();
+                    for (int i = 0; i < len - 1; i++)
+                        temp.Add(fun(list.ElementAt(i), list.ElementAt(i + 1)));
+                    return temp.Average();
+                }
             }
         }
 
