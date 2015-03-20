@@ -12,7 +12,7 @@ namespace paperTestsCode
         /// <summary>
         /// An enumeration type for comparing values
         /// </summary>
-        public enum Comprison { SrictlyLess, LessOrEqual, StrictlyGreater, GreaterOrEqual, Proximity };
+        public enum Comprison { SrictlyLess, LessOrEqual, Proximity };
 
         /// <summary>
         /// 
@@ -94,7 +94,7 @@ namespace paperTestsCode
                 ls.RemoveAt(0);
 
                 // comparing the elements depending on the comparison operator
-                Func<double, double, bool> compare = (a, b) => comp == Comprison.Proximity ? Math.Abs(b - a) < 0.03 : (comp == Comprison.SrictlyLess ? a < b : (comp == Comprison.LessOrEqual ? a <= b : (comp == Comprison.StrictlyGreater ? a > b : a >= b)));
+                Func<double, double, bool> compare = (a, b) => comp == Comprison.Proximity ? Math.Abs(b - a) < 0.03 : (comp == Comprison.SrictlyLess ? a < b :  a <= b) ;
 
                 if (compare(fn(a1), fn(y)))
                 {
